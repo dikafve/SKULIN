@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Skulin</title>
+  <link rel="stylesheet" th:href="@{/css/jadwal.css}"/>
+</head>
+<body>
+ 
+<div class="page">
+  <div class="topbar">
+    <div>
+      <h1>Jadwal pelajaran</h1>
+      <span>Skulin — manajemen jadwal</span>
+    </div>
+    <a href="#" class="add-btn" onclick="document.getElementById('overlay').classList.add('show');return false;">
+      + Tambah jadwal
+    </a>
+  </div>
+ 
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Mata pelajaran</th>
+          <th>Hari</th>
+          <th>Jam mulai</th>
+          <th>Jam selesai</th>
+          <th>Kelas</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:if="${#lists.isEmpty(jadwalList)}">
+          <td colspan="6" class="empty">Belum ada jadwal. Klik "Tambah jadwal" untuk mulai.</td>
+        </tr>
+        <tr th:each="j : ${jadwalList}">
+          <td style="font-weight:500" th:text="${j.mataPelajaran}"></td>
+          <td>
+            <span class="badge"
+              th:classappend="${j.hari == 'Senin'} ? 'badge-senin' :
+                             (${j.hari == 'Selasa'} ? 'badge-selasa' :
+                             (${j.hari == 'Rabu'} ? 'badge-rabu' :
+                             (${j.hari == 'Kamis'} ? 'badge-kamis' : 'badge-jumat')))"
+              th:text="${j.hari}"></span>
+          </td>
+          <td th:text="${j.jamMulai}"></td>
+          <td th:text="${j.jamSelesai}"></td>
+          <td th:text="${j.kelas}"></td>
+          <td>
+            <a th:href="@{/jadwal/hapus/{id}(id=${j.id})}" class="del-btn"
+               onclick="return confirm('Hapus jadwal ini?')">hapus</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+ 
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Tambah jadwal</h2>
+      <button class="close-btn" onclick="document.getElementById('overlay').classList.remove('show')">×</button>
+    </div>
+    <form th:action="@{/jadwal/tambah}" th:object="${jadwal}" method="post">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Mata pelajaran</label>
+          <input type="text" th:field="*{mataPelajaran}" placeholder="cth. Matematika" required/>
+        </div>
+        <div class="form-group">
+          <label>Hari</label>
+          <select th:field="*{hari}" required>
+            <option value="">Pilih hari</option>
+            <option>Senin</option>
+            <option>Selasa</option>
+            <option>Rabu</option>
+            <option>Kamis</option>
+            <option>Jumat</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Kelas</label>
+          <input type="text" th:field="*{kelas}" placeholder="cth. XII IPA 1" required/>
+        </div>
+        <div class="form-group">
+          <label>Jam mulai</label>
+          <input type="time" th:field="*{jamMulai}" required/>
+        </div>
+        <div class="form-group">
+          <label>Jam selesai</label>
+          <input type="time" th:field="*{jamSelesai}" required/>
+        </div>
+      </div>
+      <button type="submit" class="submit-btn">Simpan</button>
+    </form>
+  </div>
+</div>
+ 
+</body>
+</html>
