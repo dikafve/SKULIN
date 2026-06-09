@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Skulin App",
+            "request": "launch",
+            "mainClass": "main.Main",
+            "vmArgs": "--module-path C:/Users/Advan/Videos/Algoritma/Tubes_algo/javafx-sdk-26.0.1/lib --add-modules javafx.controls,javafx.fxml",
+            "env": {},
+            "projectName": "Skulin"
+        }
+    ]
+}
