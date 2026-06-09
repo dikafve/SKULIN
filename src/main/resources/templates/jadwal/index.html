@@ -22,7 +22,7 @@
     <table>
       <thead>
         <tr>
-          <th>Mata pelajaran</th>
+          <th>Mata kuliah</th>
           <th>Hari</th>
           <th>Jam mulai</th>
           <th>Jam selesai</th>
@@ -66,23 +66,23 @@
     <form th:action="@{/jadwal/tambah}" th:object="${jadwal}" method="post">
       <div class="form-grid">
         <div class="form-group full">
-          <label>Mata pelajaran</label>
-          <input type="text" th:field="*{mataPelajaran}" placeholder="cth. Matematika" required/>
+          <label>Mata Kuliah</label>
+          <input type="text" th:field="*{mataPelajaran}" placeholder="cth. Algoritma" required/>
         </div>
         <div class="form-group">
           <label>Hari</label>
           <select th:field="*{hari}" required>
             <option value="">Pilih hari</option>
-            <option>Senin</option>
-            <option>Selasa</option>
-            <option>Rabu</option>
-            <option>Kamis</option>
-            <option>Jumat</option>
-          </select>
+            <option value="Senin">Senin</option>
+            <option value="Selasa">Selasa</option>
+            <option value="Rabu">Rabu</option>
+            <option value="Kamis">Kamis</option>
+            <option value="Jumat">Jumat</option>
+        </select>
         </div>
         <div class="form-group">
           <label>Kelas</label>
-          <input type="text" th:field="*{kelas}" placeholder="cth. XII IPA 1" required/>
+          <input type="text" th:field="*{kelas}" placeholder="cth. R.161" required/>
         </div>
         <div class="form-group">
           <label>Jam mulai</label>
