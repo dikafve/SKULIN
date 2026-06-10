@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Skulin — Smart Kuliah Utility</title>
+  <title>Skulin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link rel="stylesheet" href="/css/landing.css"/>
@@ -15,8 +15,7 @@
   <a class="nav-logo" href="#">Skulin</a>
   <div class="nav-right">
     <button class="theme-btn" id="themeBtn" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></button>
-    <button class="btn btn-ghost" onclick="document.getElementById('loginOverlay').classList.add('show')">Masuk</button>
-    <button class="btn btn-primary" onclick="document.getElementById('loginOverlay').classList.add('show')">Mulai gratis</button>
+    <button class="btn btn-primary" onclick="document.getElementById('loginOverlay').classList.add('show')">Login</button>
   </div>
 </nav>
 
@@ -28,10 +27,6 @@
   <p class="hero-desc">
     Kelola jadwal kuliah, ujian, dan nongki dalam satu tempat. Cek konflik otomatis, cari slot kosong, dan fokus yang penting.
   </p>
-  <div class="hero-cta">
-    <button class="btn btn-primary" onclick="document.getElementById('loginOverlay').classList.add('show')">Mulai sekarang</button>
-    <button class="btn btn-ghost">Lihat demo</button>
-  </div>
 </section>
 
 <!-- Features -->
@@ -60,10 +55,7 @@
 <!-- CTA -->
 <section class="cta-section">
   <h2 class="cta-title">Siap bikin jadwal lo lebih rapi?</h2>
-  <p class="cta-desc">Gratis. Ga perlu kartu kredit. Langsung pakai.</p>
-  <button class="btn btn-primary cta-btn" onclick="document.getElementById('loginOverlay').classList.add('show')">
-    Mulai sekarang
-  </button>
+  <p class="cta-desc">Sokinin aja.</p>
 </section>
 
 <!-- Footer -->
@@ -104,7 +96,7 @@
   html.setAttribute('data-theme', isDark ? 'light' : 'dark');
   document.getElementById('themeBtn').innerHTML = isDark
     ? '<i class="fa-solid fa-moon"></i>'
-    : '<i class="fa-regular fa-sun"></i>';
+    : '<i class="fa-solid fa-sun"></i>';
 }
 
   document.getElementById('loginOverlay').addEventListener('click', function(e) {

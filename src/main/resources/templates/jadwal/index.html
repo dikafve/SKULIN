@@ -20,14 +20,14 @@
     <nav class="sidebar-nav">
       <div class="nav-label">Menu</div>
       <a class="nav-item active" th:href="@{/jadwal}">
-        <span class="icon">📅</span> Jadwal
+         Jadwal
       </a>
       <div class="nav-label">Tools</div>
       <button class="nav-item" onclick="showRekomendasiNongki()">
-        <span class="icon">☕</span> Rekomendasi Nongki
+         Rekomendasi Nongki
       </button>
       <button class="nav-item" onclick="cekKonflik()">
-        <span class="icon">⚠️</span> Cek Konflik
+         Cek Konflik
       </button>
     </nav>
   </aside>
@@ -49,22 +49,22 @@
       <!-- Stats -->
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-icon blue">📚</div>
+          <div class="stat-icon blue"></div>
           <div class="stat-value" th:text="${totalJadwal}">0</div>
           <div class="stat-label">Total Jadwal</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon green">✏️</div>
+          <div class="stat-icon green"></div>
           <div class="stat-value" th:text="${totalKuliah}">0</div>
           <div class="stat-label">Jadwal Kuliah</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon red">📝</div>
+          <div class="stat-icon red"></div>
           <div class="stat-value" th:text="${totalUjian}">0</div>
           <div class="stat-label">Jadwal Ujian</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon yellow">☕</div>
+          <div class="stat-icon yellow"></div>
           <div class="stat-value" th:text="${totalNongki}">0</div>
           <div class="stat-label">Jadwal Nongki</div>
         </div>
@@ -103,7 +103,7 @@
             <tbody>
               <tr th:if="${#lists.isEmpty(jadwalList)}" class="empty-row">
                 <td colspan="6">
-                  <span class="empty-icon">📭</span>
+                  <span class="empty-icon"></span>
                   Belum ada jadwal. Klik "+ Tambah Jadwal" untuk mulai.
                 </td>
               </tr>
@@ -123,7 +123,7 @@
                 </td>
                 <td>
                   <span class="time-chip">
-                    🕐 <span th:text="${j.jamMulai}"></span> – <span th:text="${j.jamSelesai}"></span>
+                     <span th:text="${j.jamMulai}"></span> – <span th:text="${j.jamSelesai}"></span>
                   </span>
                 </td>
                 <td th:text="${j.kelas}"></td>
@@ -159,9 +159,9 @@
           <div class="form-group">
             <label>Tipe</label>
             <select th:field="*{tipe}">
-              <option value="kuliah">📚 Kuliah</option>
-              <option value="ujian">📝 Ujian</option>
-              <option value="nongki">☕ Nongki</option>
+              <option value="kuliah"> Kuliah</option>
+              <option value="ujian"> Ujian</option>
+              <option value="nongki"> Nongki</option>
             </select>
           </div>
           <div class="form-group">
@@ -203,7 +203,7 @@
 <div class="overlay" id="overlayNongki">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title">☕ Rekomendasi Waktu Nongki</span>
+      <span class="modal-title"> Rekomendasi Waktu Nongki</span>
       <button class="close-btn" onclick="document.getElementById('overlayNongki').classList.remove('show')">×</button>
     </div>
     <div class="modal-body">
@@ -289,7 +289,7 @@
 
   const p = new URLSearchParams(window.location.search);
   if (p.get('success') === '1') showToast('✅ Jadwal berhasil ditambahkan!');
-  if (p.get('hapus') === '1') showToast('🗑️ Jadwal berhasil dihapus!');
+  if (p.get('hapus') === '1') showToast('Jadwal berhasil dihapus!');
 </script>
 </body>
 </html>
