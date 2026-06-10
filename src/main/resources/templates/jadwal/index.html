@@ -1,102 +1,295 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Skulin</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Skulin — Manajemen Jadwal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" th:href="@{/css/jadwal.css}"/>
 </head>
 <body>
- 
-<div class="page">
-  <div class="topbar">
-    <div>
-      <h1>Jadwal pelajaran</h1>
-      <span>Skulin — manajemen jadwal</span>
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">Skulin</div>
+      <div class="brand-sub">Smart Kuliah Utility</div>
     </div>
-    <a href="#" class="add-btn" onclick="document.getElementById('overlay').classList.add('show');return false;">
-      + Tambah jadwal
-    </a>
-  </div>
- 
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Mata kuliah</th>
-          <th>Hari</th>
-          <th>Jam mulai</th>
-          <th>Jam selesai</th>
-          <th>Kelas</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr th:if="${#lists.isEmpty(jadwalList)}">
-          <td colspan="6" class="empty">Belum ada jadwal. Klik "Tambah jadwal" untuk mulai.</td>
-        </tr>
-        <tr th:each="j : ${jadwalList}">
-          <td style="font-weight:500" th:text="${j.mataPelajaran}"></td>
-          <td>
-            <span class="badge"
-              th:classappend="${j.hari == 'Senin'} ? 'badge-senin' :
-                             (${j.hari == 'Selasa'} ? 'badge-selasa' :
-                             (${j.hari == 'Rabu'} ? 'badge-rabu' :
-                             (${j.hari == 'Kamis'} ? 'badge-kamis' : 'badge-jumat')))"
-              th:text="${j.hari}"></span>
-          </td>
-          <td th:text="${j.jamMulai}"></td>
-          <td th:text="${j.jamSelesai}"></td>
-          <td th:text="${j.kelas}"></td>
-          <td>
-            <a th:href="@{/jadwal/hapus/{id}(id=${j.id})}" class="del-btn"
-               onclick="return confirm('Hapus jadwal ini?')">hapus</a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Menu</div>
+      <a class="nav-item active" th:href="@{/jadwal}">
+        <span class="icon">📅</span> Jadwal
+      </a>
+      <div class="nav-label">Tools</div>
+      <button class="nav-item" onclick="showRekomendasiNongki()">
+        <span class="icon">☕</span> Rekomendasi Nongki
+      </button>
+      <button class="nav-item" onclick="cekKonflik()">
+        <span class="icon">⚠️</span> Cek Konflik
+      </button>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Jadwal Kuliah</div>
+        <div class="topbar-sub">Kelola jadwal kuliah, ujian &amp; nongki kamu</div>
+      </div>
+      <button class="btn btn-primary" onclick="document.getElementById('overlay').classList.add('show')">
+        + Tambah Jadwal
+      </button>
+    </div>
+
+    <div class="content">
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">📚</div>
+          <div class="stat-value" th:text="${totalJadwal}">0</div>
+          <div class="stat-label">Total Jadwal</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">✏️</div>
+          <div class="stat-value" th:text="${totalKuliah}">0</div>
+          <div class="stat-label">Jadwal Kuliah</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red">📝</div>
+          <div class="stat-value" th:text="${totalUjian}">0</div>
+          <div class="stat-label">Jadwal Ujian</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon yellow">☕</div>
+          <div class="stat-value" th:text="${totalNongki}">0</div>
+          <div class="stat-label">Jadwal Nongki</div>
+        </div>
+      </div>
+
+      <!-- Table Card -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Semua Jadwal</div>
+            <div class="card-sub" th:text="${totalJadwal} + ' jadwal terdaftar'"></div>
+          </div>
+        </div>
+        <div class="filter-bar">
+          <button class="filter-btn active" onclick="filterHari(this,'semua')">Semua</button>
+          <button class="filter-btn" onclick="filterHari(this,'Senin')">Senin</button>
+          <button class="filter-btn" onclick="filterHari(this,'Selasa')">Selasa</button>
+          <button class="filter-btn" onclick="filterHari(this,'Rabu')">Rabu</button>
+          <button class="filter-btn" onclick="filterHari(this,'Kamis')">Kamis</button>
+          <button class="filter-btn" onclick="filterHari(this,'Jumat')">Jumat</button>
+          <button class="filter-btn" onclick="filterHari(this,'Sabtu')">Sabtu</button>
+          <button class="filter-btn" onclick="filterHari(this,'Minggu')">Minggu</button>
+        </div>
+        <div class="table-wrap">
+          <table id="jadwalTable">
+            <thead>
+              <tr>
+                <th>Mata Kuliah</th>
+                <th>Tipe</th>
+                <th>Hari</th>
+                <th>Jam</th>
+                <th>Kelas / Lokasi</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:if="${#lists.isEmpty(jadwalList)}" class="empty-row">
+                <td colspan="6">
+                  <span class="empty-icon">📭</span>
+                  Belum ada jadwal. Klik "+ Tambah Jadwal" untuk mulai.
+                </td>
+              </tr>
+              <tr th:each="j : ${jadwalList}" th:data-hari="${j.hari}">
+                <td>
+                  <div class="cell-main" th:text="${j.mataPelajaran}"></div>
+                </td>
+                <td>
+                  <span class="badge"
+                    th:classappend="'badge-' + ${j.tipe != null ? j.tipe : 'kuliah'}"
+                    th:text="${j.tipe != null ? j.tipe : 'kuliah'}"></span>
+                </td>
+                <td>
+                  <span class="badge"
+                    th:classappend="'badge-' + ${#strings.toLowerCase(j.hari)}"
+                    th:text="${j.hari}"></span>
+                </td>
+                <td>
+                  <span class="time-chip">
+                    🕐 <span th:text="${j.jamMulai}"></span> – <span th:text="${j.jamSelesai}"></span>
+                  </span>
+                </td>
+                <td th:text="${j.kelas}"></td>
+                <td>
+                  <a th:href="@{/jadwal/hapus/{id}(id=${j.id})}"
+                     class="btn btn-danger"
+                     onclick="return confirm('Hapus jadwal ini?')">Hapus</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
- 
+
+<!-- Modal Tambah -->
 <div class="overlay" id="overlay">
   <div class="modal">
     <div class="modal-header">
-      <h2>Tambah jadwal</h2>
+      <span class="modal-title">Tambah Jadwal Baru</span>
       <button class="close-btn" onclick="document.getElementById('overlay').classList.remove('show')">×</button>
     </div>
     <form th:action="@{/jadwal/tambah}" th:object="${jadwal}" method="post">
-      <div class="form-grid">
-        <div class="form-group full">
-          <label>Mata Kuliah</label>
-          <input type="text" th:field="*{mataPelajaran}" placeholder="cth. Algoritma" required/>
-        </div>
-        <div class="form-group">
-          <label>Hari</label>
-          <select th:field="*{hari}" required>
-            <option value="">Pilih hari</option>
-            <option value="Senin">Senin</option>
-            <option value="Selasa">Selasa</option>
-            <option value="Rabu">Rabu</option>
-            <option value="Kamis">Kamis</option>
-            <option value="Jumat">Jumat</option>
-        </select>
-        </div>
-        <div class="form-group">
-          <label>Kelas</label>
-          <input type="text" th:field="*{kelas}" placeholder="cth. R.161" required/>
-        </div>
-        <div class="form-group">
-          <label>Jam mulai</label>
-          <input type="time" th:field="*{jamMulai}" required/>
-        </div>
-        <div class="form-group">
-          <label>Jam selesai</label>
-          <input type="time" th:field="*{jamSelesai}" required/>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Mata Kuliah</label>
+            <input type="text" th:field="*{mataPelajaran}" placeholder="cth. Algoritma &amp; Pemrograman" required/>
+          </div>
+          <div class="form-group">
+            <label>Tipe</label>
+            <select th:field="*{tipe}">
+              <option value="kuliah">📚 Kuliah</option>
+              <option value="ujian">📝 Ujian</option>
+              <option value="nongki">☕ Nongki</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Hari</label>
+            <select th:field="*{hari}" required>
+              <option value="">Pilih hari</option>
+              <option value="Senin">Senin</option>
+              <option value="Selasa">Selasa</option>
+              <option value="Rabu">Rabu</option>
+              <option value="Kamis">Kamis</option>
+              <option value="Jumat">Jumat</option>
+              <option value="Sabtu">Sabtu</option>
+              <option value="Minggu">Minggu</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Jam Mulai</label>
+            <input type="time" th:field="*{jamMulai}" required/>
+          </div>
+          <div class="form-group">
+            <label>Jam Selesai</label>
+            <input type="time" th:field="*{jamSelesai}" required/>
+          </div>
+          <div class="form-group full">
+            <label>Kelas / Lokasi</label>
+            <input type="text" th:field="*{kelas}" placeholder="cth. IF-A / Kafe Coklat"/>
+          </div>
         </div>
       </div>
-      <button type="submit" class="submit-btn">Simpan</button>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="document.getElementById('overlay').classList.remove('show')">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan Jadwal</button>
+      </div>
     </form>
   </div>
 </div>
- 
+
+<!-- Modal Nongki -->
+<div class="overlay" id="overlayNongki">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">☕ Rekomendasi Waktu Nongki</span>
+      <button class="close-btn" onclick="document.getElementById('overlayNongki').classList.remove('show')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:var(--muted);margin-bottom:16px;">Sistem akan cariin slot kosong buat nongki otomatis.</p>
+      <div class="form-group" style="margin-bottom:16px;">
+        <label>Pilih Hari</label>
+        <select id="nongkiHari" onchange="cariSlotNongki()">
+          <option value="Senin">Senin</option>
+          <option value="Selasa">Selasa</option>
+          <option value="Rabu">Rabu</option>
+          <option value="Kamis">Kamis</option>
+          <option value="Jumat">Jumat</option>
+          <option value="Sabtu">Sabtu</option>
+          <option value="Minggu">Minggu</option>
+        </select>
+      </div>
+      <div id="nongkiResult"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('overlayNongki').classList.remove('show')">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script th:inline="javascript">
+  const jadwalData = /*[[${jadwalList}]]*/ [];
+
+  function filterHari(btn, hari) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#jadwalTable tbody tr[data-hari]').forEach(row => {
+      row.style.display = (hari === 'semua' || row.dataset.hari === hari) ? '' : 'none';
+    });
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function showRekomendasiNongki() {
+    document.getElementById('overlayNongki').classList.add('show');
+    cariSlotNongki();
+  }
+
+  function cariSlotNongki() {
+    const hari = document.getElementById('nongkiHari').value;
+    const slots = ['07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00'];
+    const jadwalHari = jadwalData.filter(j => j.hari === hari);
+    const slotKosong = [];
+    for (let i = 0; i < slots.length - 1; i++) {
+      const start = slots[i], end = slots[i+1];
+      const ada = jadwalHari.some(j => j.jamMulai < end && j.jamSelesai > start);
+      if (!ada) slotKosong.push(start + ' – ' + end);
+    }
+    const el = document.getElementById('nongkiResult');
+    if (slotKosong.length === 0) {
+      el.innerHTML = '<p style="color:var(--danger)">😢 Tidak ada slot kosong di hari ' + hari + '!</p>';
+    } else {
+      el.innerHTML = '<div style="font-weight:600;margin-bottom:8px;">✅ Slot kosong di ' + hari + ':</div>' +
+        slotKosong.map(s => '<div style="background:var(--success-light);color:var(--success);padding:8px 12px;border-radius:8px;margin-bottom:6px;font-weight:500">☕ ' + s + '</div>').join('');
+    }
+  }
+
+  function cekKonflik() {
+    const konflik = [];
+    for (let i = 0; i < jadwalData.length; i++) {
+      for (let j = i + 1; j < jadwalData.length; j++) {
+        const a = jadwalData[i], b = jadwalData[j];
+        if (a.hari === b.hari && a.jamMulai < b.jamSelesai && b.jamMulai < a.jamSelesai) {
+          konflik.push('• ' + a.mataPelajaran + ' & ' + b.mataPelajaran + ' (' + a.hari + ' ' + a.jamMulai + '–' + a.jamSelesai + ')');
+        }
+      }
+    }
+    if (konflik.length === 0) showToast('✅ Tidak ada konflik jadwal!');
+    else alert('⚠️ Konflik terdeteksi:\n\n' + konflik.join('\n'));
+  }
+
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('success') === '1') showToast('✅ Jadwal berhasil ditambahkan!');
+  if (p.get('hapus') === '1') showToast('🗑️ Jadwal berhasil dihapus!');
+</script>
 </body>
 </html>

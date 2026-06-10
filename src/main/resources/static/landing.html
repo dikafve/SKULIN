@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Skulin — Smart Kuliah Utility</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="/css/landing.css"/>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav>
+  <a class="nav-logo" href="#">Skulin</a>
+  <div class="nav-right">
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></button>
+    <button class="btn btn-ghost" onclick="document.getElementById('loginOverlay').classList.add('show')">Masuk</button>
+    <button class="btn btn-primary" onclick="document.getElementById('loginOverlay').classList.add('show')">Mulai gratis</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <h1 class="hero-title">
+    Jadwal kuliah<br/>lebih <em>rapi</em>,<br/>hidup lebih santai.
+  </h1>
+  <p class="hero-desc">
+    Kelola jadwal kuliah, ujian, dan nongki dalam satu tempat. Cek konflik otomatis, cari slot kosong, dan fokus yang penting.
+  </p>
+  <div class="hero-cta">
+    <button class="btn btn-primary" onclick="document.getElementById('loginOverlay').classList.add('show')">Mulai sekarang</button>
+    <button class="btn btn-ghost">Lihat demo</button>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features">
+  <div class="section-eyebrow">Fitur</div>
+  <h2 class="section-title">Semua yang lo butuhin buat survive kuliah</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-num">01</div>
+      <div class="feature-title">Manajemen jadwal</div>
+      <p class="feature-desc">Tambah, hapus, dan filter jadwal kuliah, ujian, dan nongki dengan mudah. Semua dalam satu tabel yang bersih.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">02</div>
+      <div class="feature-title">Deteksi konflik otomatis</div>
+      <p class="feature-desc">Sistem langsung kasih tau kalau ada jadwal yang bentrok. Ga perlu ngitung manual lagi.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">03</div>
+      <div class="feature-title">Rekomendasi nongki</div>
+      <p class="feature-desc">Cari slot kosong di antara jadwal kuliah buat nongki atau istirahat. Karena hidup bukan cuma kuliah.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="cta-title">Siap bikin jadwal lo lebih rapi?</h2>
+  <p class="cta-desc">Gratis. Ga perlu kartu kredit. Langsung pakai.</p>
+  <button class="btn btn-primary cta-btn" onclick="document.getElementById('loginOverlay').classList.add('show')">
+    Mulai sekarang
+  </button>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">Skulin</div>
+  <div class="footer-text">© 2026 Skulin. Smart Kuliah Utility.</div>
+</footer>
+
+<!-- Login Modal -->
+<div class="overlay" id="loginOverlay">
+  <div class="modal">
+    <button class="close-overlay" onclick="document.getElementById('loginOverlay').classList.remove('show')">×</button>
+    <div class="modal-header">
+      <div class="modal-title">Masuk ke Skulin</div>
+      <div class="modal-sub">Lanjut ke dashboard jadwal kamu</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="kamu@email.com"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" placeholder="••••••••"/>
+      </div>
+      <button class="login-btn" onclick="window.location.href='/jadwal'">Masuk</button>
+    </div>
+    <div class="modal-footer-link">
+      Belum punya akun? <a href="#">Daftar gratis</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeBtn').innerHTML = isDark
+    ? '<i class="fa-solid fa-moon"></i>'
+    : '<i class="fa-regular fa-sun"></i>';
+}
+
+  document.getElementById('loginOverlay').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('show');
+  });
+</script>
+</body>
+</html>
