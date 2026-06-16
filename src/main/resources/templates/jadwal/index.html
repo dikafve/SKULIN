@@ -19,6 +19,7 @@
     </div>
     <nav class="sidebar-nav">
       <div class="nav-label">Menu</div>
+      <i class="fa-regular fa-calendar-days"></i>
       <a class="nav-item active" th:href="@{/jadwal}">
          Jadwal
       </a>
@@ -291,5 +292,20 @@
   if (p.get('success') === '1') showToast('✅ Jadwal berhasil ditambahkan!');
   if (p.get('hapus') === '1') showToast('Jadwal berhasil dihapus!');
 </script>
+<!-- Bottom Nav (mobile only) -->
+<nav class="bottom-nav">
+  <a class="bottom-nav-item active" th:href="@{/jadwal}">
+    <span class="icon"></span>
+    <span>Jadwal</span>
+  </a>
+  <button class="bottom-nav-item" onclick="showRekomendasiNongki()">
+    <span class="icon"></span>
+    <span>Nongki</span>
+  </button>
+  <button class="bottom-nav-item" onclick="cekKonflik()">
+    <span class="icon"></span>
+    <span>Konflik</span>
+  </button>
+</nav>
 </body>
 </html>
