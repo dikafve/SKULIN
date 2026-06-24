@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Skulin — Manajemen Jadwal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" th:href="@{/css/jadwal.css}"/>
 </head>
@@ -19,7 +20,6 @@
     </div>
     <nav class="sidebar-nav">
       <div class="nav-label">Menu</div>
-      <i class="fa-regular fa-calendar-days"></i>
       <a class="nav-item active" th:href="@{/jadwal}">
          Jadwal
       </a>
@@ -49,27 +49,27 @@
 
       <!-- Stats -->
       <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon blue"></div>
-          <div class="stat-value" th:text="${totalJadwal}">0</div>
-          <div class="stat-label">Total Jadwal</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon green"></div>
-          <div class="stat-value" th:text="${totalKuliah}">0</div>
-          <div class="stat-label">Jadwal Kuliah</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon red"></div>
-          <div class="stat-value" th:text="${totalUjian}">0</div>
-          <div class="stat-label">Jadwal Ujian</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon yellow"></div>
-          <div class="stat-value" th:text="${totalNongki}">0</div>
-          <div class="stat-label">Jadwal Nongki</div>
-        </div>
-      </div>
+  <div class="stat-card">
+    <div class="stat-icon blue"><i class="fa-solid fa-chart-line"></i></div>
+    <div class="stat-value" th:text="${totalJadwal}">0</div>
+    <div class="stat-label">Total Jadwal</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon green"><i class="fa-solid fa-calendar"></i></div>
+    <div class="stat-value" th:text="${totalKuliah}">0</div>
+    <div class="stat-label">Jadwal Kuliah</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon red"><i class="fa-solid fa-book-open-reader"></i></div>
+    <div class="stat-value" th:text="${totalUjian}">0</div>
+    <div class="stat-label">Jadwal Ujian</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon yellow"><i class="fa-solid fa-mug-hot"></i></div>
+    <div class="stat-value" th:text="${totalNongki}">0</div>
+    <div class="stat-label">Jadwal Nongki</div>
+  </div>
+</div>
 
       <!-- Table Card -->
       <div class="card">
@@ -128,10 +128,17 @@
                   </span>
                 </td>
                 <td th:text="${j.kelas}"></td>
-                <td>
+                <td style="display:flex; gap:6px;">
+                  <a th:href="@{/jadwal/edit/{id}(id=${j.id})}" 
+                    class="btn btn-ghost" 
+                    style="font-size:13px;padding:6px 12px;">
+                    <i class="fa-solid fa-pen"></i> Edit
+                  </a>
                   <a th:href="@{/jadwal/hapus/{id}(id=${j.id})}"
-                     class="btn btn-danger"
-                     onclick="return confirm('Hapus jadwal ini?')">Hapus</a>
+                    class="btn btn-danger"
+                    onclick="return confirm('Hapus jadwal ini?')">
+                    <i class="fa-solid fa-trash"></i> Hapus
+                  </a>
                 </td>
               </tr>
             </tbody>
