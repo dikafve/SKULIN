@@ -57,11 +57,12 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
-.brand-logo {
-  font-size: 30px;
+.nav-logo {
+  font-size: 25px;
   font-weight: 800;
   color: var(--text);
   letter-spacing: -.5px;
+  text-decoration: none;
 }
 
 .brand-sub {
