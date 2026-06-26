@@ -1,4 +1,5 @@
 package com.skulin.skulin.controller;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.skulin.skulin.model.Jadwal;
 import com.skulin.skulin.repository.JadwalRepository;
@@ -20,14 +22,33 @@ public class JadwalController {
     private JadwalRepository jadwalRepository;
 
     @GetMapping
-    public String index(Model model) {
+    public String index(Model model, @RequestParam(defaultValue = "hari") String sort) {
         var semua = jadwalRepository.findAll();
+        
+        // Urutan hari
+        List<String> urutan = List.of("Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu");
+        
+        semua.sort((a, b) -> {
+            if (sort.equals("hari")) {
+                int hariA = urutan.indexOf(a.getHari());
+                int hariB = urutan.indexOf(b.getHari());
+                if (hariA != hariB) return hariA - hariB;
+                return a.getJamMulai().compareTo(b.getJamMulai());
+            } else if (sort.equals("jam")) {
+                return a.getJamMulai().compareTo(b.getJamMulai());
+            } else if (sort.equals("matkul")) {
+                return a.getMataPelajaran().compareToIgnoreCase(b.getMataPelajaran());
+            }
+            return 0;
+        });
+    
         model.addAttribute("jadwalList", semua);
         model.addAttribute("jadwal", new Jadwal());
         model.addAttribute("totalJadwal", semua.size());
         model.addAttribute("totalKuliah", semua.stream().filter(j -> "kuliah".equals(j.getTipe())).count());
         model.addAttribute("totalUjian",  semua.stream().filter(j -> "ujian".equals(j.getTipe())).count());
         model.addAttribute("totalNongki", semua.stream().filter(j -> "nongki".equals(j.getTipe())).count());
+        model.addAttribute("currentSort", sort);
         return "jadwal/index";
     }
 
