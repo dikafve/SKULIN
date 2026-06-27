@@ -78,24 +78,40 @@
     <div class="card-title">Semua Jadwal</div>
     <div class="card-sub" th:text="${totalJadwal} + ' jadwal terdaftar'"></div>
   </div>
+</div>
+
+<div class="filter-bar" style="justify-content: space-between; align-items: center;">
+  <!-- Filter tanggal -->
+  <form th:action="@{/jadwal}" method="get" style="display:flex; gap:8px; align-items:center;">
+    <input type="date" name="tanggal" th:value="${filterTanggal}"
+           style="padding:7px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:13px; outline:none; color:var(--text);"/>
+    <button type="submit" class="btn btn-primary" style="padding:7px 14px; font-size:13px;">
+      <i class="fa-solid fa-filter"></i> Filter
+    </button>
+    <a th:href="@{/jadwal}" class="btn btn-ghost" style="padding:7px 14px; font-size:13px;">
+      <i class="fa-solid fa-rotate-left"></i> Reset
+    </a>
+  </form>
+
+  <!-- Sort -->
   <div style="display:flex; gap:8px; align-items:center;">
     <span style="font-size:13px; color:var(--muted);">Urutkan:</span>
-    <a th:href="@{/jadwal(sort='hari')}"
+    <a th:href="@{/jadwal(sort='tanggal', tanggal=${filterTanggal})}"
        class="btn btn-ghost"
-       th:classappend="${currentSort == 'hari'} ? ' btn-sort-active'"
-       style="font-size:13px; padding:6px 12px;">
-      <i class="fa-solid fa-calendar-days"></i> Hari
+       th:classappend="${currentSort == 'tanggal'} ? ' btn-sort-active'"
+       style="font-size:13px; padding:7px 12px;">
+      <i class="fa-solid fa-calendar-days"></i> Tanggal
     </a>
-    <a th:href="@{/jadwal(sort='jam')}"
+    <a th:href="@{/jadwal(sort='jam', tanggal=${filterTanggal})}"
        class="btn btn-ghost"
        th:classappend="${currentSort == 'jam'} ? ' btn-sort-active'"
-       style="font-size:13px; padding:6px 12px;">
+       style="font-size:13px; padding:7px 12px;">
       <i class="fa-solid fa-clock"></i> Jam
     </a>
-    <a th:href="@{/jadwal(sort='matkul')}"
+    <a th:href="@{/jadwal(sort='matkul', tanggal=${filterTanggal})}"
        class="btn btn-ghost"
        th:classappend="${currentSort == 'matkul'} ? ' btn-sort-active'"
-       style="font-size:13px; padding:6px 12px;">
+       style="font-size:13px; padding:7px 12px;">
       <i class="fa-solid fa-arrow-down-a-z"></i> A-Z
     </a>
   </div>
@@ -106,7 +122,7 @@
               <tr>
                 <th>Mata Kuliah</th>
                 <th>Tipe</th>
-                <th>Hari</th>
+                <th>Tanggal & Hari</th>
                 <th>Jam</th>
                 <th>Kelas / Lokasi</th>
                 <th></th>
@@ -129,9 +145,8 @@
                     th:text="${j.tipe != null ? j.tipe : 'kuliah'}"></span>
                 </td>
                 <td>
-                  <span class="badge"
-                    th:classappend="'badge-' + ${#strings.toLowerCase(j.hari)}"
-                    th:text="${j.hari}"></span>
+                    <div class="cell-main" th:text="${#temporals.format(j.tanggal, 'dd MMM yyyy')}"></div>
+                    <div class="cell-sub" th:text="${j.hari}"></div>
                 </td>
                 <td>
                   <span class="time-chip">
@@ -183,18 +198,9 @@
               <option value="nongki"> Nongki</option>
             </select>
           </div>
-          <div class="form-group">
-            <label>Hari</label>
-            <select th:field="*{hari}" required>
-              <option value="">Pilih hari</option>
-              <option value="Senin">Senin</option>
-              <option value="Selasa">Selasa</option>
-              <option value="Rabu">Rabu</option>
-              <option value="Kamis">Kamis</option>
-              <option value="Jumat">Jumat</option>
-              <option value="Sabtu">Sabtu</option>
-              <option value="Minggu">Minggu</option>
-            </select>
+          <div class="form-group full">
+              <label>Tanggal</label>
+              <input type="date" th:field="*{tanggal}" required/>
           </div>
           <div class="form-group">
             <label>Jam Mulai</label>

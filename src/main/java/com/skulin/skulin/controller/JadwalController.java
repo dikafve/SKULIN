@@ -1,6 +1,4 @@
 package com.skulin.skulin.controller;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,35 +20,47 @@ public class JadwalController {
     private JadwalRepository jadwalRepository;
 
     @GetMapping
-    public String index(Model model, @RequestParam(defaultValue = "hari") String sort) {
-        var semua = jadwalRepository.findAll();
-        
-        // Urutan hari
-        List<String> urutan = List.of("Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu");
-        
-        semua.sort((a, b) -> {
-            if (sort.equals("hari")) {
-                int hariA = urutan.indexOf(a.getHari());
-                int hariB = urutan.indexOf(b.getHari());
-                if (hariA != hariB) return hariA - hariB;
-                return a.getJamMulai().compareTo(b.getJamMulai());
-            } else if (sort.equals("jam")) {
-                return a.getJamMulai().compareTo(b.getJamMulai());
-            } else if (sort.equals("matkul")) {
-                return a.getMataPelajaran().compareToIgnoreCase(b.getMataPelajaran());
-            }
-            return 0;
-        });
-    
-        model.addAttribute("jadwalList", semua);
-        model.addAttribute("jadwal", new Jadwal());
-        model.addAttribute("totalJadwal", semua.size());
-        model.addAttribute("totalKuliah", semua.stream().filter(j -> "kuliah".equals(j.getTipe())).count());
-        model.addAttribute("totalUjian",  semua.stream().filter(j -> "ujian".equals(j.getTipe())).count());
-        model.addAttribute("totalNongki", semua.stream().filter(j -> "nongki".equals(j.getTipe())).count());
-        model.addAttribute("currentSort", sort);
-        return "jadwal/index";
+public String index(Model model,
+                    @RequestParam(required = false) String tanggal,
+                    @RequestParam(defaultValue = "tanggal") String sort) {
+
+    var semua = jadwalRepository.findAll();
+
+    // Filter by tanggal
+    if (tanggal != null && !tanggal.isEmpty()) {
+        java.time.LocalDate tgl = java.time.LocalDate.parse(tanggal);
+        semua = semua.stream()
+                .filter(j -> tgl.equals(j.getTanggal()))
+                .collect(java.util.stream.Collectors.toList());
     }
+
+    // Sort
+    semua.sort((a, b) -> {
+        if (sort.equals("tanggal")) {
+            if (a.getTanggal() == null) return 1;
+            if (b.getTanggal() == null) return -1;
+            int tgl = a.getTanggal().compareTo(b.getTanggal());
+            if (tgl != 0) return tgl;
+            return a.getJamMulai().compareTo(b.getJamMulai());
+        } else if (sort.equals("jam")) {
+            return a.getJamMulai().compareTo(b.getJamMulai());
+        } else if (sort.equals("matkul")) {
+            return a.getMataPelajaran().compareToIgnoreCase(b.getMataPelajaran());
+        }
+        return 0;
+    });
+
+    var all = jadwalRepository.findAll();
+    model.addAttribute("jadwalList", semua);
+    model.addAttribute("jadwal", new Jadwal());
+    model.addAttribute("totalJadwal", all.size());
+    model.addAttribute("totalKuliah", all.stream().filter(j -> "kuliah".equals(j.getTipe())).count());
+    model.addAttribute("totalUjian",  all.stream().filter(j -> "ujian".equals(j.getTipe())).count());
+    model.addAttribute("totalNongki", all.stream().filter(j -> "nongki".equals(j.getTipe())).count());
+    model.addAttribute("filterTanggal", tanggal);
+    model.addAttribute("currentSort", sort);
+    return "jadwal/index";
+}
 
     @PostMapping("/tambah")
     public String tambah(@ModelAttribute Jadwal jadwal) {
