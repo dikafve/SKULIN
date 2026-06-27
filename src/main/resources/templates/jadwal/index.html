@@ -13,7 +13,7 @@
 <div class="layout">
 
   <!-- Sidebar -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <a class="nav-logo" href="landing.html">Skulin</a>
       <div class="brand-sub">Smart Kuliah Utility</div>
@@ -36,14 +36,19 @@
   <!-- Main -->
   <div class="main">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">Jadwal Kuliah</div>
-        <div class="topbar-sub">Kelola jadwal kuliah, ujian &amp; nongki kamu</div>
-      </div>
-      <button class="btn btn-primary" onclick="document.getElementById('overlay').classList.add('show')">
-        + Tambah Jadwal
-      </button>
+  <div style="display:flex; align-items:center; gap:12px;">
+    <button class="hamburger" onclick="toggleSidebar()">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div>
+      <div class="topbar-title">Jadwal Kuliah</div>
+      <div class="topbar-sub">Kelola jadwal kuliah, ujian &amp; nongki kamu</div>
     </div>
+  </div>
+  <button class="btn btn-primary" onclick="document.getElementById('overlay').classList.add('show')">
+    + Tambah Jadwal
+  </button>
+</div>
 
     <div class="content">
 
@@ -315,6 +320,11 @@
   const p = new URLSearchParams(window.location.search);
   if (p.get('success') === '1') showToast('✅ Jadwal berhasil ditambahkan!');
   if (p.get('hapus') === '1') showToast('Jadwal berhasil dihapus!');
+
+  function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarBackdrop').classList.toggle('show');
+}
 </script>
 <!-- Bottom Nav (mobile only) -->
 <nav class="bottom-nav">
@@ -331,5 +341,7 @@
     <span>Konflik</span>
   </button>
 </nav>
+
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 </body>
 </html>
