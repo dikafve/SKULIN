@@ -552,7 +552,7 @@ Ini mencegah file database dan hasil build ikut ter-upload.
 
 ## Informasi Project
 
-**Nama Aplikasi:** Skulin — Smart Kuliah Utility for Learning & Integrated Scheduling
+**Nama Aplikasi:** Skulin : Smart Kuliah Utility for Learning & Integrated Scheduling
 
 **Dibuat oleh:** Abieza Febrian Mahardika (714250049)
 
