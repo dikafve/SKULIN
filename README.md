@@ -693,6 +693,6 @@ Aplikasi Skulin sekarang bisa diakses siapa pun yang punya link ini, selama:
 
 **Dosen Pengampu:** MOHAMAD NURKAMAL FAUZAN, S.T., M.T., SFPC.
 
-**Mata Kuliah:** Algoritma & Pemrograman
+**Mata Kuliah:** Algoritma
 
 **Tahun:** 2025/2026
