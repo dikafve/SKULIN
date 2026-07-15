@@ -18,6 +18,8 @@ Skulin adalah aplikasi web manajemen jadwal untuk mahasiswa yang dibangun menggu
 10. [Menjalankan Aplikasi](#10-menjalankan-aplikasi)
 11. [Fitur Aplikasi](#11-fitur-aplikasi)
 12. [Push ke GitHub](#12-push-ke-github)
+13. [Migrasi Database ke Neon (PostgreSQL)](#13-migrasi-database-ke-neon-postgresql)
+14. [Deploy Publik dengan ngrok](#14-deploy-publik-dengan-ngrok)
 
 ---
 
@@ -536,12 +538,145 @@ Ini mencegah file database dan hasil build ikut ter-upload.
 
 ---
 
-## Teknologi yang Digunakan
+## 13. Migrasi Database ke Neon (PostgreSQL)
+
+Untuk kebutuhan deployment, database dipindah dari SQLite (lokal) ke **PostgreSQL** yang di-hosting di **Neon** — layanan serverless PostgreSQL gratis yang bisa diakses dari mana saja tanpa perlu install server database sendiri.
+
+### Buat Project di Neon
+
+1. Buka https://neon.tech, lalu daftar/login (bisa langsung pakai akun GitHub)
+2. Klik **Create a project**
+3. Isi nama project, misalnya `skulin-db`
+4. Pilih region terdekat, misalnya **Singapore**, biar koneksinya lebih cepat
+5. Klik **Create Project**, tunggu sampai database selesai dibuat
+
+### Ambil Connection String
+
+1. Setelah project jadi, buka tab **Connection Details** di dashboard Neon
+2. Neon akan menampilkan connection string dengan format seperti ini:
+
+```
+postgresql://<username>:<password>@<host>.neon.tech/<database>?sslmode=require
+```
+
+3. Copy connection string ini, nanti dipakai di `application.properties`
+
+### Tambah Dependency PostgreSQL ke pom.xml
+
+Buka `pom.xml`, cari bagian `<dependencies>`, lalu tambahkan (dan boleh hapus/comment dependency SQLite kalau sudah tidak dipakai lagi):
+
+```xml
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+### Update application.properties
+
+Ganti isi `src/main/resources/application.properties` dari konfigurasi SQLite ke PostgreSQL Neon:
+
+```properties
+spring.datasource.url=jdbc:postgresql://<host>.neon.tech/<database>?sslmode=require
+spring.datasource.username=<username>
+spring.datasource.password=<password>
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.thymeleaf.cache=false
+```
+
+Penjelasan:
+- `ddl-auto=update` — Hibernate otomatis membuat tabel `jadwal` di Neon sesuai model `Jadwal.java`, tidak perlu bikin skrip SQL manual
+- `sslmode=require` — wajib ada karena Neon mengharuskan koneksi terenkripsi (SSL)
+
+### Jalankan dan Cek Koneksi
+
+```powershell
+.\mvnw spring-boot:run
+```
+
+Kalau berhasil, di terminal akan muncul log Hibernate yang membuat tabel (`create table jadwal ...`), dan di dashboard Neon (tab **Tables**) tabel `jadwal` akan langsung muncul.
+
+> **Catatan:** Neon otomatis "tidur" (auto-suspend) kalau database tidak dipakai, dan akan menyala lagi otomatis begitu ada koneksi baru masuk — jadi tidak perlu khawatir soal biaya server nyala terus-menerus.
+
+> **Penting:** Jangan commit `application.properties` yang berisi username/password Neon ke repository publik. Masukkan file ini ke `.gitignore`, atau pindahkan kredensialnya ke environment variable.
+
+---
+
+## 14. Deploy Publik dengan ngrok
+
+Setelah database sudah pindah ke Neon, aplikasi masih berjalan di `localhost` yang cuma bisa diakses dari komputer sendiri. Supaya orang lain (dosen, teman, atau siapa pun) bisa mengakses aplikasi ini lewat internet tanpa perlu hosting berbayar, dipakai **ngrok** — tool yang bikin "terowongan" dari localhost ke alamat publik.
+
+### Install ngrok
+
+1. Daftar/login di https://ngrok.com
+2. Download ngrok sesuai OS (Windows/Mac/Linux) di halaman **Setup & Installation**
+3. Extract file ngrok ke folder yang gampang diakses, misalnya `C:\ngrok\`
+
+### Hubungkan ngrok dengan Akun
+
+Copy **Authtoken** dari dashboard ngrok, lalu jalankan sekali saja di terminal:
+
+```bash
+ngrok config add-authtoken <authtoken_kamu>
+```
+
+### Jalankan Aplikasi Spring Boot
+
+Pastikan aplikasi masih jalan di port 8080 (biarkan terminal ini tetap terbuka):
+
+```powershell
+.\mvnw spring-boot:run
+```
+
+### Buka Tunnel ke Port 8080
+
+Buka terminal baru (jangan tutup terminal Spring Boot), lalu jalankan:
+
+```bash
+ngrok http 8080
+```
+
+ngrok akan menampilkan output seperti ini:
+
+```
+Forwarding    https://xxxx-xxx-xxx-xxx-xx.ngrok-free.app -> http://localhost:8080
+```
+
+### Akses dari Internet
+
+Buka URL di baris **Forwarding** (yang `https://...ngrok-free.app`) dari perangkat mana pun — HP, laptop lain, dll — lalu tambahkan `/jadwal` di belakangnya:
+
+```
+https://xxxx-xxx-xxx-xxx-xx.ngrok-free.app/jadwal
+```
+
+Aplikasi Skulin sekarang bisa diakses siapa pun yang punya link ini, selama:
+- Aplikasi Spring Boot masih jalan di komputer kamu
+- Terminal ngrok masih terbuka
+
+### Catatan Penting
+
+| Hal | Keterangan |
+|---|---|
+| Link berubah-ubah | Di akun ngrok gratis, link publik akan berbeda setiap kali `ngrok http 8080` dijalankan ulang |
+| Harus tetap online | ngrok cuma meneruskan koneksi, bukan hosting — laptop/PC kamu harus tetap menyala dan terkoneksi internet |
+| Untuk demo/testing | Cocok untuk demo ke dosen atau teman, bukan untuk production jangka panjang |
+| Hosting permanen | Kalau butuh link yang permanen, bisa pertimbangkan Railway atau Render di kemudian hari |
+
+---
+
+
 
 | Komponen | Teknologi |
 |---|---|
 | Backend | Java 25 + Spring Boot 3.5 |
-| Database | SQLite via Hibernate JPA |
+| Database (lokal) | SQLite via Hibernate JPA |
+| Database (production) | PostgreSQL via Neon (serverless) |
+| Publikasi/Tunneling | ngrok |
 | Frontend | HTML5 + CSS3 + JavaScript |
 | Template Engine | Thymeleaf |
 | Build Tool | Maven (via mvnw) |
